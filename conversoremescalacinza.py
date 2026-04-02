@@ -1,6 +1,7 @@
-import numpy as np
-import time
 import argparse
+import time
+
+import numpy as np
 
 
 def ler_header_ppm(f):
@@ -46,8 +47,6 @@ def converter_para_cinza_serial(
             fin.seek(offset_dados)
 
             for y in range(0, altura, linhas_por_bloco):
-                # inicio_bloco = time.time()  # (opcional)
-
                 bloco_altura = min(linhas_por_bloco, altura - y)
                 quantidade_bytes = bloco_altura * largura * 3
 
@@ -58,7 +57,6 @@ def converter_para_cinza_serial(
                 bloco = np.frombuffer(dados, dtype=np.uint8)
                 bloco = bloco.reshape((bloco_altura, largura, 3))
 
-                # Conversão para cinza
                 cinza = (
                     0.299 * bloco[:, :, 0] +
                     0.587 * bloco[:, :, 1] +
@@ -70,9 +68,6 @@ def converter_para_cinza_serial(
 
                 progresso = ((y + bloco_altura) / altura) * 100
                 print(f"Progresso: {progresso:6.2f}%")
-
-                # fim_bloco = time.time()
-                # print(f"Tempo do bloco: {fim_bloco - inicio_bloco:.4f}s")
 
         fim_total = time.time()
         tempo_total = fim_total - inicio_total
@@ -86,14 +81,15 @@ def converter_para_cinza_serial(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Converter imagem para escala de cinza")
-    
+
     parser.add_argument("arquivo_entrada", help="Caminho do arquivo de entrada")
     parser.add_argument("arquivo_saida", help="Caminho do arquivo de saída")
-        
+
     args = parser.parse_args()
 
-    tempo = converter_para_cinza_serial(
+    converter_para_cinza_serial(
         arquivo_entrada=args.arquivo_entrada,
         arquivo_saida=args.arquivo_saida,
         linhas_por_bloco=256
     )
+
